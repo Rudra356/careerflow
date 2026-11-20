@@ -1,0 +1,15 @@
+ALTER TABLE users
+    RENAME COLUMN full_name TO first_name;
+
+ALTER TABLE users
+    ADD COLUMN last_name VARCHAR(100) NOT NULL DEFAULT '';
+
+ALTER TABLE users
+    ADD COLUMN gender VARCHAR(30);
+
+UPDATE users
+SET gender = 'PREFER_NOT_TO_SAY'
+WHERE gender IS NULL;
+
+ALTER TABLE users
+    ALTER COLUMN gender SET NOT NULL;
