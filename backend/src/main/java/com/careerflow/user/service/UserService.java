@@ -2,6 +2,7 @@ package com.careerflow.user.service;
 
 import com.careerflow.auth.dto.RegistrationRequest;
 import com.careerflow.auth.dto.RegistrationResponse;
+import com.careerflow.common.exception.DuplicateResourceException;
 import com.careerflow.user.entity.User;
 import com.careerflow.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -13,6 +14,7 @@ import java.util.Locale;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -25,13 +27,11 @@ public class UserService {
     public RegistrationResponse registerUser(RegistrationRequest request) {
 
         String email = request.email().toLowerCase(Locale.ROOT).trim();
-        String rawPassword = request.password().trim();
+        String rawPassword = request.password();
         int passwordBytes = rawPassword.getBytes(StandardCharsets.UTF_8).length;
 
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException(
-                    "An account with this email already exists"
-            );
+            throw new DuplicateResourceException("Email already exists");
         }
 
         if (passwordBytes > 72) {
